@@ -6,12 +6,22 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup index.ts --format cjs,esm --dts",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "lint": "tsc"
   },
   "keywords": [],
-  "author": "",
+  "contributors": [
+    {
+      "name": "Nkurunziza octave",
+      "email": "nkurunzizaheuruex@gmail.com"
+    },
+    {
+      "name": "Rumanzi Bonheur",
+      "email": "rumanzibonheur@gmail.com"
+    }
+  ],
   "license": "ISC",
-  "description": "",
+  "description": "Starter for your typescript application",
   "devDependencies": {
     "typescript": "^5.6.2"
   },
