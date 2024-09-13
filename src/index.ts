@@ -1,4 +1,4 @@
 // sum.js
 export function sum(a: number, b: number) {
-  return a + b + 1;
+  return a + b + 1 + 1;
 }
