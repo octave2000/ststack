@@ -1,12 +1,13 @@
 {
-  "name": "st-stack",
+  "name": "create-st-stack",
   "version": "0.0.4",
   "main": "dist/index.js",
   "bin": {
-    "create-st-stack": "./dist/index.js"
+    "create-st-stack": "dist/index.js"
   },
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsc -w",
