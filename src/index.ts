@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import inquirer from "inquirer";
+import { checkPackageManager } from "./helpers/checkPackageManager";
 
 const program = new Command();
 
@@ -28,6 +29,10 @@ program
       message: "choose a package manager for your project",
       choices: ["npm", "yarn", "pnpm"],
     });
+
+    const packageExist = await checkPackageManager(
+      packageManager.packageManager
+    );
 
     const framework = await inquirer.prompt({
       name: "framework",
@@ -138,6 +143,7 @@ program
       framework: framework.framework,
       packageManager: packageManager.packageManager,
       language: language?.language,
+      packageExist: packageExist,
       styleOption: styleOption?.styleOption,
       eslintOption: eslintOption?.eslintOption,
       routeOption: routeOption?.routeOption,
