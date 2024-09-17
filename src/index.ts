@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import inquirer from "inquirer";
 import { initiateNestjs, initiateNextjs, initiateReactApp } from "./installFramework";
+import { checkPackageManager } from "./helpers/checkPackageManager";
 
 const program = new Command();
 
@@ -29,6 +30,10 @@ program
       message: "choose a package manager for your project",
       choices: ["npm", "yarn", "pnpm"],
     });
+
+    const packageExist = await checkPackageManager(
+      packageManager.packageManager
+    );
 
     const framework = await inquirer.prompt({
       name: "framework",
