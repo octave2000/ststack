@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import inquirer from "inquirer";
+import { initiateNestjs, initiateNextjs, initiateReactApp } from "./installFramework";
 
 const program = new Command();
 
@@ -134,17 +135,41 @@ program
     }
 
     const userSelections = {
-      projectName: projectName.projectName,
-      framework: framework.framework,
-      packageManager: packageManager.packageManager,
-      language: language?.language,
-      styleOption: styleOption?.styleOption,
-      eslintOption: eslintOption?.eslintOption,
-      routeOption: routeOption?.routeOption,
-      dirOption: dirOption?.dirOption,
-      turboOption: turboOption?.turboOption,
-      stateManagementOption: stateManagementOption?.stateManagementOption,
+      projectName: projectName.projectName as string,
+      framework: framework.framework as string,
+      packageManager: packageManager.packageManager as string,
+      language: language?.language as string,
+      styleOption: styleOption?.styleOption as string,
+      eslintOption: eslintOption?.eslintOption as string,
+      routeOption: routeOption?.routeOption as string,
+      dirOption: dirOption?.dirOption as string,
+      turboOption: turboOption?.turboOption as string,
+      stateManagementOption: stateManagementOption?.stateManagementOption as string,
     };
+    if (userSelections.framework.toLocaleLowerCase().includes("next")) initiateNextjs({
+      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
+      useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
+      useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
+      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+      projectPath: `./${userSelections.projectName}`,
+      version: "latest",
+    });
+    if (userSelections.framework.toLocaleLowerCase().includes("react")) initiateReactApp({
+      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
+      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+      projectPath: `./${userSelections.projectName}`,
+      version: "latest",
+    });
+    if (userSelections.framework.toLocaleLowerCase().includes("nest")) initiateNestjs({
+      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
+      projectPath: `./${userSelections.projectName}`,
+      version: "latest",
+      useSrcDir: true
+    });
 
     console.log(userSelections);
   });

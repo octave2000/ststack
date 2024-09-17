@@ -13,7 +13,7 @@ import path from 'path';
 //     console.log('React project initiated successfully!');
 // });
 
-async function initiateReactApp({
+export async function initiateReactApp({
     projectPath,
     version = 'latest',
     addTailwind = true,
@@ -102,7 +102,7 @@ async function initiateReactApp({
 //     console.log('NestJS project initiated successfully!');
 // });
 
-async function initiateNestjs({
+export async function initiateNestjs({
     projectPath,
     version = 'latest',
     addTypeScript = true,
@@ -142,7 +142,7 @@ async function initiateNestjs({
 // }).then(() => {
 //     console.log('Next.js project initiated successfully!');
 // })
-async function initiateNextjs({
+export async function initiateNextjs({
     projectPath,
     version = 'latest',
     addTailwind = true,
@@ -150,7 +150,7 @@ async function initiateNextjs({
     addTypeScript = true,
     useAppRoute = true,
     useSrcDir = true,
-    addZustand = true
+    addZustand = true,
 }: {
     projectPath: string;
     version: string;
