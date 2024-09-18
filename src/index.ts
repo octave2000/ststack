@@ -2,8 +2,14 @@
 
 import { Command } from "commander";
 import inquirer from "inquirer";
-import { initiateNestjs, initiateNextjs, initiateReactApp } from "./installFramework";
+import {
+  initiateNestjs,
+  initiateNextjs,
+  initiateReactApp,
+} from "./installFramework";
 import { checkPackageManager } from "./helpers/checkPackageManager";
+import path from "path";
+import { isDirValid } from "./helpers/checkDirectory";
 
 const program = new Command();
 
@@ -12,13 +18,25 @@ program
   .description("package.json")
   .version("0.0.5")
   .action(async () => {
+    const dir = process.cwd();
+    const folderName = path.basename(dir);
+    const checkDirectory = await isDirValid(folderName);
     const projectName = await inquirer.prompt({
       name: "projectName",
-      message: "input project name (avoid capital letters)",
+      message:
+        "input project name (avoid capital letters) or use (.) to install in current directory",
       type: "input",
       validate: (input) => {
         if (/[A-Z]/.test(input)) {
           return "Project name should not contain capital letters.";
+        }
+
+        if (input !== "." && /^[._-]/.test(input)) {
+          return "Project name should not start with '.', '_', or '-'.";
+        }
+
+        if (!checkDirectory && input === ".") {
+          return "Your current directory has capital letters in it ";
         }
         return true;
       },
@@ -149,32 +167,41 @@ program
       routeOption: routeOption?.routeOption as string,
       dirOption: dirOption?.dirOption as string,
       turboOption: turboOption?.turboOption as string,
-      stateManagementOption: stateManagementOption?.stateManagementOption as string,
+      stateManagementOption:
+        stateManagementOption?.stateManagementOption as string,
     };
-    if (userSelections.framework.toLocaleLowerCase().includes("next")) initiateNextjs({
-      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
-      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
-      useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
-      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-    });
-    if (userSelections.framework.toLocaleLowerCase().includes("react")) initiateReactApp({
-      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
-      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-    });
-    if (userSelections.framework.toLocaleLowerCase().includes("nest")) initiateNestjs({
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-      useSrcDir: true
-    });
+    // if (userSelections.framework.toLocaleLowerCase().includes("next"))
+    //   initiateNextjs({
+    //     addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+    //     addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+    //     addTypeScript:
+    //       userSelections.language.toLocaleLowerCase() == "typescript",
+    //     useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
+    //     useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
+    //     addZustand:
+    //       userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+    //     projectPath: `./${userSelections.projectName}`,
+    //     version: "latest",
+    //   });
+    // if (userSelections.framework.toLocaleLowerCase().includes("react"))
+    //   initiateReactApp({
+    //     addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+    //     addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+    //     addTypeScript:
+    //       userSelections.language.toLocaleLowerCase() == "typescript",
+    //     addZustand:
+    //       userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+    //     projectPath: `./${userSelections.projectName}`,
+    //     version: "latest",
+    //   });
+    // if (userSelections.framework.toLocaleLowerCase().includes("nest"))
+    //   initiateNestjs({
+    //     addTypeScript:
+    //       userSelections.language.toLocaleLowerCase() == "typescript",
+    //     projectPath: `./${userSelections.projectName}`,
+    //     version: "latest",
+    //     useSrcDir: true,
+    //   });
 
     console.log(userSelections);
   });
