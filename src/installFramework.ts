@@ -8,7 +8,9 @@ import path from 'path';
 //     addTailwind: true,
 //     addEsLint: true,
 //     addTypeScript: true,
-//     addZustand: true
+//     addZustand: true,
+//     packageManager: "npm"
+
 // }).then(() => {
 //     console.log('React project initiated successfully!');
 // });
@@ -19,7 +21,9 @@ export async function initiateReactApp({
     addTailwind = true,
     addEsLint = true,
     addTypeScript = true,
-    addZustand = true
+    addZustand = true,
+    packageManager = "npm"
+
 }: {
     projectPath: string;
     version: string;
@@ -27,25 +31,27 @@ export async function initiateReactApp({
     addEsLint: boolean;
     addTypeScript: boolean;
     addZustand: boolean;
+    packageManager: "npm" | "pnpm" | "bun" | "yarn"
 }) {
     // Step 1: Create the React project
     console.log(`Creating React project at ${projectPath} with version ${version}`);
-    execSync(`npx create-react-app@${version} ${projectPath} ${addTypeScript ? '--template typescript' : ''}`, { stdio: 'inherit' });
+    execSync(`npx -y create-vite@${version} ${projectPath} --template ${addTypeScript ? 'react-ts' : 'react'} -- ${addEsLint ? '--eslint' : ''}`, { stdio: 'inherit' });
+
 
     // Change directory to project
     process.chdir(projectPath);
 
     // Step 2: Install ESLint if requested
     if (addEsLint) {
-        console.log('Installing ESLint...');
-        execSync('npm install eslint --save-dev', { stdio: 'inherit' });
-        execSync('npx eslint --init', { stdio: 'inherit' });
+        console.log('Installing ....');
+        execSync(`${packageManager} install`, { stdio: 'inherit' });
     }
 
     // Step 3: Install Tailwind CSS if requested
     if (addTailwind) {
         console.log('Installing Tailwind CSS...');
-        execSync('npm install -D tailwindcss postcss autoprefixer', { stdio: 'inherit' });
+        if (packageManager == "yarn") execSync(`${packageManager} add -D tailwindcss postcss autoprefixer`, { stdio: 'inherit' });
+        else execSync(`${packageManager} install -D tailwindcss postcss autoprefixer`, { stdio: 'inherit' });
         execSync('npx tailwindcss init', { stdio: 'inherit' });
 
         // Configure Tailwind
@@ -72,7 +78,9 @@ export async function initiateReactApp({
     // Step 4: Add Zustand for state management
     if (addZustand) {
         console.log('Installing Zustand...');
-        execSync('npm install zustand', { stdio: 'inherit' });
+        if (packageManager == "yarn") execSync(`${packageManager} add zustand`, { stdio: 'inherit' });
+        else execSync(`${packageManager} install zustand`, { stdio: 'inherit' });
+
 
         const zustandExample = `
             import { create } from 'zustand';
@@ -97,7 +105,8 @@ export async function initiateReactApp({
 //     projectPath: `nestjs-app`,
 //     version: 'latest',
 //     addTypeScript: true,
-//     useSrcDir: true
+//     useSrcDir: true,
+//     packageManager: "bun"
 // }).then(() => {
 //     console.log('NestJS project initiated successfully!');
 // });
@@ -106,23 +115,28 @@ export async function initiateNestjs({
     projectPath,
     version = 'latest',
     addTypeScript = true,
-    useSrcDir = true
+    useSrcDir = true,
+    packageManager = "npm"
 }: {
     projectPath: string;
     version: string;
     addTypeScript: boolean;
     useSrcDir: boolean;
+    packageManager: "npm" | "pnpm" | "bun" | "yarn"
 }) {
     // nest new cool-rokject --skip-install -l "TypeScript" -p pnpm
     console.log(`Creating NestJS project at ${projectPath} with version ${version}`);
-    execSync(`npx @nestjs/cli@${version} new ${projectPath} ${addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'}`, { stdio: 'inherit' });
+    execSync(`npx @nestjs/cli new  ${projectPath} ${addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'} --package-manager npm --skip-install`, { stdio: 'inherit' });
+
 
     // Change directory to project
     process.chdir(projectPath);
 
     // Step 2: Modify the structure if `useSrcDir` is true
     if (useSrcDir) {
-        console.log('Setting up custom src directory...');
+        console.log('Installing ....');
+        execSync(`${packageManager} install`, { stdio: 'inherit' });
+
         // By default, NestJS already uses a "src" directory, so no need for extra modifications
         // However, if you need specific directory setups, you can handle that here
     }
@@ -137,8 +151,10 @@ export async function initiateNestjs({
 //     addEsLint: true,
 //     addTypeScript: true,
 //     useAppRoute: true,
+//     useTurbo: true,
 //     useSrcDir: true,
-//     addZustand: true
+//     addZustand: true,
+//     packageManager: "bun"
 // }).then(() => {
 //     console.log('Next.js project initiated successfully!');
 // })
@@ -149,8 +165,10 @@ export async function initiateNextjs({
     addEsLint = true,
     addTypeScript = true,
     useAppRoute = true,
+    useTurbo = false,
     useSrcDir = true,
     addZustand = true,
+    packageManager = "npm"
 }: {
     projectPath: string;
     version: string;
@@ -158,21 +176,24 @@ export async function initiateNextjs({
     addEsLint: boolean;
     addTypeScript: boolean;
     useAppRoute: boolean;
+    useTurbo: boolean;
     useSrcDir: boolean;
     addZustand: boolean;
+    packageManager: "npm" | "pnpm" | "bun" | "yarn"
 }) {
     // Step 1: Create the Next.js project
     console.log(`Creating Next.js project at ${projectPath} with version ${version}`);
-    execSync(`npx create-next-app@${version} ${projectPath} --skip-install ${addTypeScript ? '--typescript' : ''} ${addTailwind ? '--tailwind' : ''} ${addEsLint ? '--eslint' : ''} ${useAppRoute ? '--app' : ''} ${useSrcDir ? '--src-dir' : ''}  --import-alias "@/*"`, { stdio: 'inherit' });
+    console.log(`npx create-next-app@${version} ${projectPath} ${addTypeScript ? '--typescript' : ''} ${useTurbo ? '--turbo' : ''} ${addTailwind ? '--tailwind' : ''} ${addEsLint ? '--eslint' : ''} ${useAppRoute ? '--app' : ''} ${useSrcDir ? '--src-dir' : ''}  --import-alias "@/*" --use-${packageManager}`);
 
-
+    execSync(`npx create-next-app@${version} ${projectPath} ${addTypeScript ? '--typescript' : ''} ${useTurbo ? '--turbo' : ''} ${addTailwind ? '--tailwind' : ''} ${addEsLint ? '--eslint' : ''} ${useAppRoute ? '--app' : ''} ${useSrcDir ? '--src-dir' : ''}  --import-alias "@/*" --use-${packageManager}`, { stdio: 'inherit' });
     // Change directory to project
     process.chdir(projectPath);
 
     // Step 5: Add Zustand for state management
     if (addZustand) {
         console.log('Installing Zustand...');
-        execSync('npm install zustand', { stdio: 'inherit' });
+        if (packageManager == "yarn") execSync(`${packageManager} add zustand`, { stdio: 'inherit' });
+        else execSync(`${packageManager} install zustand`, { stdio: 'inherit' });
 
         const zustandExample = `
             import { create } from 'zustand';

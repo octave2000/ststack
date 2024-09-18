@@ -28,7 +28,7 @@ program
       name: "packageManager",
       type: "list",
       message: "choose a package manager for your project",
-      choices: ["npm", "yarn", "pnpm"],
+      choices: ["npm", "yarn", "pnpm", "bun"],
     });
 
     const packageExist = await checkPackageManager(
@@ -142,7 +142,7 @@ program
     const userSelections = {
       projectName: projectName.projectName as string,
       framework: framework.framework as string,
-      packageManager: packageManager.packageManager as string,
+      packageManager: packageManager.packageManager as "npm" | "bnpm" | "bun",
       language: language?.language as string,
       styleOption: styleOption?.styleOption as string,
       eslintOption: eslintOption?.eslintOption as string,
@@ -156,8 +156,10 @@ program
       addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
       addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
       useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
+      useTurbo: userSelections.turboOption.toLocaleLowerCase() == "yes",
       useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
       addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
       projectPath: `./${userSelections.projectName}`,
       version: "latest",
     });
@@ -166,6 +168,7 @@ program
       addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
       addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
       addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
       projectPath: `./${userSelections.projectName}`,
       version: "latest",
     });
@@ -173,6 +176,7 @@ program
       addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
       projectPath: `./${userSelections.projectName}`,
       version: "latest",
+      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
       useSrcDir: true
     });
 
