@@ -170,6 +170,7 @@ program
       stateManagementOption:
         stateManagementOption?.stateManagementOption as string,
     };
+    
     if (userSelections.framework.toLocaleLowerCase().includes("next")) initiateNextjs({
       addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
       addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
