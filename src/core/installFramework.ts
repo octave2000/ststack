@@ -7,7 +7,7 @@ import {
   setupPrisma,
 } from "../utils/orms/prisma/setupPrisma";
 import {
-  configureDrizzle,
+  configureDrizzleForNextjs,
   setupDrizzle,
 } from "../utils/orms/drizzle/setupDrizzle";
 
@@ -163,7 +163,11 @@ export async function initiateNestjs({
           await setupPrisma(addon.dbType, packageManager);
           break;
         case "drizzle":
-          await setupDrizzle(addon.dbType, packageManager);
+          await setupDrizzle({
+            addTypeScript: addTypeScript,
+            dbType: addon.dbType,
+            packageManager: packageManager,
+          });;
           break;
         default:
           console.log("No ORM selected.");
@@ -177,7 +181,14 @@ export async function initiateNestjs({
           await generateNestPrismaService();
           break;
         case "drizzle":
-          await configureDrizzle();
+          // Configure drizzle for nestjs
+          /*
+    
+    
+            Missing code
+    
+          
+          */
           break;
         default:
           break;
@@ -253,6 +264,7 @@ export async function initiateNextjs({
           : `${packageManager} install zustand`;
       execSync(zustandInstallCmd, { stdio: "inherit" });
 
+
       const zustandExample = !(addTypeScript) ? `
 import { create } from 'zustand';
 
@@ -296,7 +308,11 @@ export const useStore = create<CounterState>((set) => ({
           await setupPrisma(addon.dbType, packageManager);
           break;
         case "drizzle":
-          await setupDrizzle(addon.dbType, packageManager);
+          await setupDrizzle({
+            addTypeScript: addTypeScript,
+            dbType: addon.dbType,
+            packageManager: packageManager,
+          });
           break;
         default:
           console.log("No ORM selected.");
@@ -309,7 +325,10 @@ export const useStore = create<CounterState>((set) => ({
           await configurePrisma();
           break;
         case "drizzle":
-          await configureDrizzle();
+          await configureDrizzleForNextjs({
+            addTypeScript: addTypeScript,
+            dbType: addon.dbType,
+          });;
           break;
         default:
           break;
