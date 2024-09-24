@@ -31,16 +31,9 @@ export async function initiateReactApp({
   console.log(
     `Creating React project at ${projectPath} with version ${version}`
   );
-  console.log(
-    `npx -y create-vite@${version} ${
-      projectPath == "./." ? "." : projectPath
-    } --template ${addTypeScript ? "react-ts" : "react"} -- ${
-      addEsLint ? "--eslint" : ""
-    }`
-  );
+
   execSync(
-    `npx -y create-vite@${version} ${projectPath} --template ${
-      addTypeScript ? "react-ts" : "react"
+    `npx -y create-vite@${version} ${projectPath.replace("./", "")} --template ${addTypeScript ? "react-ts" : "react"
     } -- ${addEsLint ? "--eslint" : ""}`
   );
 
@@ -89,15 +82,32 @@ export async function initiateReactApp({
       execSync(`${packageManager} add zustand`, { stdio: "inherit" });
     else execSync(`${packageManager} install zustand`, { stdio: "inherit" });
 
-    const zustandExample = `
-            import { create } from 'zustand';
+    const zustandExample = !(addTypeScript) ? `
+import { create } from 'zustand';
 
-            export const useStore = create((set) => ({
-                count: 0,
-                increment: () => set((state) => ({ count: state.count + 1 })),
-                decrement: () => set((state) => ({ count: state.count - 1 })),
-            }));
+export const useStore = create((set) => ({
+    count: 0,
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+}));
+    
+        ` : `
+import { create } from 'zustand';
+
+interface CounterState {
+    count: number;
+    increment: () => void;
+    decrement: () => void;
+}
+
+export const useStore = create<CounterState>((set) => ({
+    count: 0,
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+}));
+        
         `;
+
     const storeDir = "src/store";
     if (!fs.existsSync(storeDir)) {
       fs.mkdirSync(storeDir);
@@ -131,8 +141,7 @@ export async function initiateNestjs({
       `Creating NestJS project at ${projectPath} with version ${version}`
     );
     execSync(
-      `npx @nestjs/cli new  ${projectPath} ${
-        addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'
+      `npx @nestjs/cli new  ${projectPath} ${addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'
       } --package-manager npm --skip-install`,
       { stdio: "inherit" }
     );
@@ -244,7 +253,7 @@ export async function initiateNextjs({
           : `${packageManager} install zustand`;
       execSync(zustandInstallCmd, { stdio: "inherit" });
 
-      const zustandExample = `
+      const zustandExample = !(addTypeScript) ? `
 import { create } from 'zustand';
 
 export const useStore = create((set) => ({
@@ -252,7 +261,23 @@ export const useStore = create((set) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
 }));
-`;
+    
+        ` : `
+import { create } from 'zustand';
+
+interface CounterState {
+    count: number;
+    increment: () => void;
+    decrement: () => void;
+}
+
+export const useStore = create<CounterState>((set) => ({
+    count: 0,
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+}));
+              
+              `;
       const storeDir = useSrcDir ? "src/store" : "store";
       if (!fs.existsSync(storeDir)) {
         fs.mkdirSync(storeDir, { recursive: true });
