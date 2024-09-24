@@ -6,7 +6,7 @@ import {
   initiateNestjs,
   initiateNextjs,
   initiateReactApp,
-} from "./installFramework";
+} from "./core/installFramework";
 import { checkPackageManager } from "./helpers/checkPackageManager";
 import path from "path";
 import { isDirValid } from "./helpers/checkDirectory";
@@ -66,6 +66,7 @@ program
       routeOption,
       dirOption,
       turboOption,
+      addon,
       stateManagementOption;
 
     // sub frameworks conditions ---------------------------------------------------------------------------------------------------------
@@ -117,6 +118,21 @@ program
         type: "rawlist",
         choices: ["yes", "no"],
       });
+
+      addon = await inquirer.prompt([
+        {
+          name: "orm",
+          type: "rawlist",
+          message: "Choose ORM",
+          choices: ["none", "drizzle", "prisma"],
+        },
+        {
+          name: "db",
+          type: "rawlist",
+          message: "Choose database",
+          choices: ["none", "postgresql", "mysql", "sqlite"],
+        },
+      ]);
     }
     if (framework.framework === "Reactjs") {
       language = await inquirer.prompt({
@@ -155,6 +171,20 @@ program
         type: "rawlist",
         choices: ["typescript", "javascript"],
       });
+      addon = await inquirer.prompt([
+        {
+          name: "orm",
+          type: "rawlist",
+          message: "Choose ORM",
+          choices: ["none", "drizzle", "prisma"],
+        },
+        {
+          name: "db",
+          type: "rawlist",
+          message: "Choose database",
+          choices: ["none", "postgresql", "mysql", "sqlite"],
+        },
+      ]);
     }
 
     const userSelections = {
@@ -166,41 +196,66 @@ program
       eslintOption: eslintOption?.eslintOption as string,
       routeOption: routeOption?.routeOption as string,
       dirOption: dirOption?.dirOption as string,
+      addon: addon,
       turboOption: turboOption?.turboOption as string,
       stateManagementOption:
         stateManagementOption?.stateManagementOption as string,
     };
-    
-    if (userSelections.framework.toLocaleLowerCase().includes("next")) initiateNextjs({
-      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
-      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
-      useTurbo: userSelections.turboOption.toLocaleLowerCase() == "yes",
-      useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
-      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
-      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-    });
-    if (userSelections.framework.toLocaleLowerCase().includes("react")) initiateReactApp({
-      addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
-      addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      addZustand: userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
-      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-    });
-    if (userSelections.framework.toLocaleLowerCase().includes("nest")) initiateNestjs({
-      addTypeScript: userSelections.language.toLocaleLowerCase() == "typescript",
-      projectPath: `./${userSelections.projectName}`,
-      version: "latest",
-      packageManager: userSelections.packageManager.toLowerCase() as "npm" | "pnpm" | "bun" | "yarn",
-      useSrcDir: true
-    });
+    console.log(userSelections.projectName);
 
-    console.log(userSelections);
+    if (userSelections.framework.toLocaleLowerCase().includes("next"))
+      initiateNextjs({
+        addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+        addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+        addTypeScript:
+          userSelections.language.toLocaleLowerCase() == "typescript",
+        useAppRoute: userSelections.routeOption.toLocaleLowerCase() == "yes",
+        useTurbo: userSelections.turboOption.toLocaleLowerCase() == "yes",
+        useSrcDir: userSelections.dirOption.toLocaleLowerCase() == "yes",
+        addZustand:
+          userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+        packageManager: userSelections.packageManager.toLowerCase() as
+          | "npm"
+          | "pnpm"
+          | "bun"
+          | "yarn",
+        projectPath: `./${userSelections.projectName}`,
+        addon: { dbType: addon.db, ormType: addon.orm },
+        version: "latest",
+      });
+    if (userSelections.framework.toLocaleLowerCase().includes("react"))
+      initiateReactApp({
+        addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
+        addTailwind: userSelections.styleOption.toLocaleLowerCase() == "yes",
+        addTypeScript:
+          userSelections.language.toLocaleLowerCase() == "typescript",
+        addZustand:
+          userSelections.stateManagementOption.toLocaleLowerCase() == "yes",
+        packageManager: userSelections.packageManager.toLowerCase() as
+          | "npm"
+          | "pnpm"
+          | "bun"
+          | "yarn",
+        projectPath: `./${userSelections.projectName}`,
+        version: "latest",
+      });
+    if (userSelections.framework.toLocaleLowerCase().includes("nest"))
+      initiateNestjs({
+        addTypeScript:
+          userSelections.language.toLocaleLowerCase() == "typescript",
+        projectPath: `./${userSelections.projectName}`,
+        version: "latest",
+        packageManager: userSelections.packageManager.toLowerCase() as
+          | "npm"
+          | "pnpm"
+          | "bun"
+          | "yarn",
+        useSrcDir: true,
+        addon: {
+          dbType: addon.db,
+          ormType: addon.orm,
+        },
+      });
   });
 
 program.parse();
