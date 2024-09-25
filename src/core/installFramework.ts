@@ -7,8 +7,10 @@ import {
   setupPrisma,
 } from "../utils/orms/prisma/setupPrisma";
 import {
+  configureDrizzleForNestjs,
   configureDrizzleForNextjs,
   setupDrizzle,
+  setupNestDrizzle,
 } from "../utils/orms/drizzle/setupDrizzle";
 
 export async function initiateReactApp({
@@ -33,8 +35,12 @@ export async function initiateReactApp({
   );
 
   execSync(
-    `npx -y create-vite@${version} ${projectPath.replace("./", "")} --template ${addTypeScript ? "react-ts" : "react"
-    } -- ${addEsLint ? "--eslint" : ""}`
+    `npx -y create-vite@${version} ${projectPath.replace(
+      "./",
+      ""
+    )} --template ${addTypeScript ? "react-ts" : "react"} -- ${
+      addEsLint ? "--eslint" : ""
+    }`
   );
 
   process.chdir(projectPath);
@@ -82,7 +88,8 @@ export async function initiateReactApp({
       execSync(`${packageManager} add zustand`, { stdio: "inherit" });
     else execSync(`${packageManager} install zustand`, { stdio: "inherit" });
 
-    const zustandExample = !(addTypeScript) ? `
+    const zustandExample = !addTypeScript
+      ? `
 import { create } from 'zustand';
 
 export const useStore = create((set) => ({
@@ -91,7 +98,8 @@ export const useStore = create((set) => ({
     decrement: () => set((state) => ({ count: state.count - 1 })),
 }));
     
-        ` : `
+        `
+      : `
 import { create } from 'zustand';
 
 interface CounterState {
@@ -141,7 +149,8 @@ export async function initiateNestjs({
       `Creating NestJS project at ${projectPath} with version ${version}`
     );
     execSync(
-      `npx @nestjs/cli new  ${projectPath} ${addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'
+      `npx @nestjs/cli new  ${projectPath} ${
+        addTypeScript ? '-l "TypeScript"' : '-l "JavaScript"'
       } --package-manager npm --skip-install`,
       { stdio: "inherit" }
     );
@@ -163,11 +172,11 @@ export async function initiateNestjs({
           await setupPrisma(addon.dbType, packageManager);
           break;
         case "drizzle":
-          await setupDrizzle({
+          await setupNestDrizzle({
             addTypeScript: addTypeScript,
             dbType: addon.dbType,
             packageManager: packageManager,
-          });;
+          });
           break;
         default:
           console.log("No ORM selected.");
@@ -181,14 +190,7 @@ export async function initiateNestjs({
           await generateNestPrismaService();
           break;
         case "drizzle":
-          // Configure drizzle for nestjs
-          /*
-    
-    
-            Missing code
-    
-          
-          */
+          await configureDrizzleForNestjs({ dbType: addon.dbType });
           break;
         default:
           break;
@@ -264,8 +266,8 @@ export async function initiateNextjs({
           : `${packageManager} install zustand`;
       execSync(zustandInstallCmd, { stdio: "inherit" });
 
-
-      const zustandExample = !(addTypeScript) ? `
+      const zustandExample = !addTypeScript
+        ? `
 import { create } from 'zustand';
 
 export const useStore = create((set) => ({
@@ -274,7 +276,8 @@ export const useStore = create((set) => ({
     decrement: () => set((state) => ({ count: state.count - 1 })),
 }));
     
-        ` : `
+        `
+        : `
 import { create } from 'zustand';
 
 interface CounterState {
@@ -328,7 +331,7 @@ export const useStore = create<CounterState>((set) => ({
           await configureDrizzleForNextjs({
             addTypeScript: addTypeScript,
             dbType: addon.dbType,
-          });;
+          });
           break;
         default:
           break;
