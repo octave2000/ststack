@@ -1,0 +1,85 @@
+<!-- Gobal options -->
+- project name (default directory) No caps,no space
+<!-- - skip-install -->
+- packagemanager
+<!-- End of Global options -->
+
+
+
+
+
+
+
+
+
+
+<!--Base Configuration -->
+- Minimal configurations
+    - Nextjs  (recommnded configuration)
+    - Nestjs  (recommnded configuration)
+    - React (recommnded configuration)
+
+- Advanced Configuration
+    - Next js
+        - tailwind
+        - eslint
+        - ts
+        - app or page route
+        - use src/dir
+        - enabled turbo in development
+        - add state manager (Zustand)
+    - React
+        - add state manager (Zustand)
+        - tailwind
+        - eslint
+        - ts
+    - Nestjs
+<!-- End of base configuation -->
+
+
+<!-- StarterKit -->
+- Start From StaterKit
+    - Nextjs 
+        -
+        -
+        -
+        -
+    - Nestjs
+        -
+        -
+        -
+        -
+    - React
+        -
+        -
+        -
+        -
+<!-- End of starterkit -->
+
+
+
+
+
+
+<!--  -->
+- Recommended Addons
+- Custom Addons
+<!--  -->
+
+
+<!-- Addon  -->
+- Auth
+    - Authjs
+    - Clerk
+    - Passport
+- enabled trpc
+- ORM
+    - Drizzle
+    - Prizma
+- Database type
+    - Postgres
+    - MySQL
+    - Turso
+    - Mongo
+
+<!-- End of addon  -->

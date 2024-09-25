@@ -1,5 +1,11 @@
 # st-stack
 
+## 1.0.0
+
+### Major Changes
+
+- major release
+
 ## 0.0.4
 
 ### Patch Changes
