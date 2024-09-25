@@ -1,5 +1,11 @@
 # st-stack
 
+## 1.0.1
+
+### Patch Changes
+
+- 8c88779: added readme
+
 ## 1.0.0
 
 ### Major Changes
