@@ -11,7 +11,7 @@ export async function setupPrisma(dbType: string, packageManager: string) {
   execSync(installCmd, { stdio: "inherit" });
 
   console.log("Initializing Prisma...");
-  execSync(`${packageManager} exec prisma init`, { stdio: "inherit" });
+  execSync(`npx prisma init`, { stdio: "inherit" });
 
   const prismaSchemaPath = path.join("prisma", "schema.prisma");
   let datasource = "";
@@ -60,27 +60,6 @@ export async function setupPrisma(dbType: string, packageManager: string) {
 
   fs.writeFileSync(prismaSchemaPath, prismaSchemaContent);
   console.log("Prisma schema configured.");
-}
-
-export async function generateNestPrismaService() {
-  console.log("generating prisma service ");
-  execSync("nest g module prisma ");
-  execSync("nest g service prisma");
-  const prismaModulePath = path.join("src", "prisma", "prisma.module.ts");
-  const customPrismaModule = `
-    import { Global, Module } from '@nestjs/common';
-  import { PrismaService } from './prisma.service';
-  
-  @Global()
-  @Module({
-    providers: [PrismaService]
-  })
-  export class PrismaModule {}
-  
-    `;
-  fs.writeFileSync(prismaModulePath, customPrismaModule);
-
-  console.log("prisma service generated ");
 }
 
 export async function configurePrisma() {

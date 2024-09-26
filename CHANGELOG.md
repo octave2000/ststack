@@ -1,5 +1,18 @@
 # st-stack
 
+## 1.0.2
+
+### Patch Changes
+
+- added license
+
+## 1.0.1
+
+### Patch Changes
+
+- updated code structure
+- 8c88779: added readme
+
 ## 1.0.0
 
 ### Major Changes

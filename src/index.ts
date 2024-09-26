@@ -2,14 +2,11 @@
 
 import { Command } from "commander";
 import inquirer from "inquirer";
-import {
-  initiateNestjs,
-  initiateNextjs,
-  initiateReactApp,
-} from "./core/installFramework";
+// import { initiateNextjs } from "./core/installFramework";
 import { checkPackageManager } from "./helpers/checkPackageManager";
 import path from "path";
 import { isDirValid } from "./helpers/checkDirectory";
+import { initiateNestjs, initiateNextjs, initiateReactApp } from "./core";
 
 const program = new Command();
 

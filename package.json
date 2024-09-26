@@ -1,6 +1,6 @@
 {
   "name": "create-st-stack",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "bin": {
     "create-st-stack": "dist/index.js"
@@ -28,7 +28,7 @@
       "email": "rumanzibonheur@gmail.com"
     }
   ],
-  "license": "ISC",
+  "license": "MIT",
   "description": "Starter for your typescript application",
   "devDependencies": {
     "typescript": "^5.6.2"
