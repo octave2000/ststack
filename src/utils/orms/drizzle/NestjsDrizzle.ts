@@ -7,11 +7,14 @@ export async function setupNestDrizzle({
   packageManager,
   addTypeScript,
 }: {
-  dbType: "none" | "mysql" | "postgresql" | "sqlite";
-  packageManager: "yarn" | "npm" | "bun" | "pnpm";
+  dbType: "none" | "mysql" | "postgresql" | "sqlite" | "mongo";
+  packageManager: "yarn" | "npm" | "bun" | "pnpm" | "mongo";
   addTypeScript: boolean;
 }) {
   if (dbType === "none") return;
+  if (dbType === "mongo") {
+    return "drizzle do not support mongo";
+  }
   console.log("installing drizzle orm ");
   let drizzlePackages = ["drizzle-kit", "drizzle-orm"];
   switch (dbType) {
@@ -36,14 +39,17 @@ export async function setupNestDrizzle({
   } ${drizzlePackages.join(" ")}`;
 
   execSync(installCmd, { stdio: "inherit" });
-  console.log(`${dbType} and drizzle orm`);
+  console.log(`${dbType} and drizzle orm installed`);
 }
 
 export async function configureDrizzleForNestjs({
   dbType,
 }: {
-  dbType: "none" | "mysql" | "postgresql" | "sqlite";
+  dbType: "none" | "mysql" | "postgresql" | "sqlite" | "mongo";
 }) {
+  if (dbType === "mongo") {
+    return "drizzle do not support mongo";
+  }
   const drizzleConfig =
     dbType == "mysql"
       ? `
@@ -87,11 +93,14 @@ export async function configureDrizzleForNestjs({
   import { mysqlTable, serial, varchar } from 'drizzle-orm/mysql-core';
   
   export const users = mysqlTable('users', {
-    id: serial('id').primaryKey(),
-    email: varchar('email', { length: 255 }).notNull(),
-    name: varchar('name', { length: 255 }).notNull(),
-    tel: varchar('tel', { length: 15 }).notNull(), // Assuming tel is stored as a string
-  });
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 255 }).notNull(),
+  password: varchar('password', { length: 255 }).notNull(),
+  hashedRt: varchar('hashedRt', { length: 255 }),
+},
+(users) => ({
+  emailUniqueIndex: uniqueIndex('email_unique_idx').on(users.email)
+}));
   
     `
       : dbType == "postgresql"
@@ -99,11 +108,14 @@ export async function configureDrizzleForNestjs({
   import { pgTable, serial, varchar } from 'drizzle-orm/pg-core';
   
   export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
-    email: varchar('email', { length: 255 }).notNull(),
-    name: varchar('name', { length: 255 }).notNull(),
-    tel: varchar('tel', { length: 15 }).notNull(), // Assuming tel is stored as a string of up to 15 characters
-  });
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 255 }).notNull(),
+  password: varchar('password', { length: 255 }).notNull(),
+  hashedRt: text('hashedRt'),
+},
+(users) => ({
+  emailUniqueIndex: uniqueIndex('email_unique_idx').on(users.email) 
+}));
   
     `
       : dbType == "sqlite"
@@ -111,11 +123,14 @@ export async function configureDrizzleForNestjs({
   import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
   
   export const users = sqliteTable('users', {
-    id: integer('id').primaryKey().autoincrement(),
-    email: text('email').notNull(),
-    name: text('name').notNull(),
-    tel: text('tel').notNull(), // SQLite doesn't have varchar, text will work for strings
-  });
+  id: integer('id').primaryKey().autoincrement(),
+  email: varchar('email', { length: 255 }).notNull(),
+  password: varchar('password', { length: 255 }).notNull(),
+  hashedRt: text('hashedRt'),
+},
+(users) => ({
+  emailUniqueIndex: uniqueIndex('email_unique_idx').on(users.email) // Unique index on email
+}));
   
     `
       : "";

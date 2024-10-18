@@ -128,6 +128,13 @@ program
           type: "rawlist",
           message: "Choose database",
           choices: ["none", "postgresql", "mysql", "sqlite"],
+          when: (answers) => answers.orm !== "none",
+        },
+        {
+          name: "auth",
+          type: "rawlist",
+          message: "do you want to add auth",
+          choices: ["none", "nextAuht"],
         },
       ]);
     }
@@ -180,6 +187,13 @@ program
           type: "rawlist",
           message: "Choose database",
           choices: ["none", "postgresql", "mysql", "sqlite"],
+        },
+        {
+          name: "auth",
+          type: "rawlist",
+          message: "do you want to install auth(nest jwt & passport)?",
+          choices: ["none", "nestjwt/passport"],
+          when: (answers) => answers.orm && answers.db !== "none",
         },
       ]);
     }
@@ -251,6 +265,7 @@ program
         addon: {
           dbType: addon.db,
           ormType: addon.orm,
+          auth: addon.auth,
         },
       });
   });

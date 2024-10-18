@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 
-export async function setupPrisma(dbType: string, packageManager: string) {
+export async function setupPrisma(packageManager: string, dbType?: string) {
   console.log("Installing Prisma...");
   const installCmd =
     packageManager === "yarn"
@@ -14,6 +14,8 @@ export async function setupPrisma(dbType: string, packageManager: string) {
   execSync(`npx prisma init`, { stdio: "inherit" });
 
   const prismaSchemaPath = path.join("prisma", "schema.prisma");
+  if (dbType !== "none") {
+  }
   let datasource = "";
   switch (dbType) {
     case "postgresql":
@@ -34,6 +36,12 @@ export async function setupPrisma(dbType: string, packageManager: string) {
     url      = "file:./dev.db"
   }`;
       break;
+    case "none":
+      datasource = `
+      datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+      `;
     case "mongodb":
       datasource = `datasource db {
     provider = "mongodb"
@@ -45,17 +53,21 @@ export async function setupPrisma(dbType: string, packageManager: string) {
   }
 
   const prismaSchemaContent = `
-  ${datasource}
-  
   generator client {
     provider = "prisma-client-js"
   }
   
-  model User {
-    id    Int     @id @default(autoincrement())
-    email String  @unique
-    name  String?
-  }
+  ${datasource}
+  
+  
+ model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255) 
+  hashedRt  String?  @db.Text 
+
+  @@map("users")
+}
   `.trim();
 
   fs.writeFileSync(prismaSchemaPath, prismaSchemaContent);

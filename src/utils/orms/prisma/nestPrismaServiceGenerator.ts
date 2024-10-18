@@ -10,8 +10,8 @@ export async function generateNestPrismaService() {
   const prismaServicePath = path.join("src", "prisma", "prisma.service.ts");
 
   const customPrismaService = `
-  import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-  import { PrismaClient } from '@prisma/client';
+import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
   
   @Injectable()
   export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -28,8 +28,8 @@ export async function generateNestPrismaService() {
   fs.writeFileSync(prismaServicePath, customPrismaService);
 
   const customPrismaModule = `
-      import { Global, Module } from '@nestjs/common';
-    import { PrismaService } from './prisma.service';
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
     
     @Global()
     @Module({

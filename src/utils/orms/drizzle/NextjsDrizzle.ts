@@ -7,11 +7,14 @@ export async function setupDrizzle({
   packageManager,
   addTypeScript,
 }: {
-  dbType: "none" | "mysql" | "postgresql" | "sqlite";
+  dbType: "none" | "mysql" | "postgresql" | "sqlite" | "mongo";
   packageManager: "yarn" | "npm" | "bun" | "pnpm";
   addTypeScript: boolean;
 }) {
   if (dbType == "none") return;
+  if (dbType == "mongo") {
+    return "drizzle do not support mongo ";
+  }
   console.log("Installing Drizzle ORM...");
   let drizzlePackages = ["drizzle-kit", "drizzle-orm"];
   switch (dbType) {
@@ -42,9 +45,12 @@ export async function configureDrizzleForNextjs({
   dbType,
   addTypeScript,
 }: {
-  dbType: "none" | "mysql" | "postgresql" | "sqlite";
+  dbType: "none" | "mysql" | "postgresql" | "sqlite" | "mongo";
   addTypeScript: boolean;
 }) {
+  if (dbType === "mongo") {
+    return "drizzle do not support mongo";
+  }
   const drizzleConfig =
     dbType == "postgresql"
       ? `

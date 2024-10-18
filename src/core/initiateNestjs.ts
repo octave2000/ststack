@@ -9,6 +9,12 @@ import {
   generateNestPrismaService,
   setupPrisma,
 } from "../utils/orms/prisma";
+import { installNestValidators } from "../helpers/nestValidators/nestValidators";
+import {
+  configureAuthFiles,
+  createAuthFolders,
+  initiatePassportJwt,
+} from "../utils/auth/passport/nestjs/jwt-auth/jwt";
 
 export async function initiateNestjs({
   projectPath,
@@ -25,7 +31,8 @@ export async function initiateNestjs({
   packageManager: "npm" | "pnpm" | "bun" | "yarn";
   addon: {
     ormType: "none" | "prisma" | "drizzle";
-    dbType: "none" | "mysql" | "postgresql" | "sqlite";
+    dbType: "none" | "mysql" | "postgresql" | "sqlite" | "mongo";
+    auth: "none" | "nestjwt/passport";
   };
 }) {
   try {
@@ -53,34 +60,38 @@ export async function initiateNestjs({
 
       switch (addon.ormType) {
         case "prisma":
-          await setupPrisma(addon.dbType, packageManager);
-          break;
-        case "drizzle":
-          await setupNestDrizzle({
-            addTypeScript: addTypeScript,
-            dbType: addon.dbType,
-            packageManager: packageManager,
-          });
-          break;
-        default:
-          console.log("No ORM selected.");
-      }
-
-      configureNestEnv(addon.dbType);
-
-      switch (addon.ormType) {
-        case "prisma":
+          await setupPrisma(packageManager, addon.dbType);
+          await installNestValidators(packageManager);
+          configureNestEnv(addon.dbType);
           await configurePrisma();
           await generateNestPrismaService();
           break;
+
         case "drizzle":
+          await setupNestDrizzle({
+            addTypeScript,
+            dbType: addon.dbType,
+            packageManager,
+          });
+
+          configureNestEnv(addon.dbType);
           await configureDrizzleForNestjs({ dbType: addon.dbType });
+          await installNestValidators(packageManager);
           break;
+
         default:
+          console.log("No ORM selected.");
           break;
       }
     } else {
       console.log("No ORM or Database selected.");
+    }
+
+    if (addon && addon.auth !== "none") {
+      console.log("setting up passport auth");
+      await initiatePassportJwt(packageManager);
+      await createAuthFolders();
+      await configureAuthFiles(addon.ormType);
     }
 
     console.log("Project initialization complete!");
