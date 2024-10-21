@@ -11,7 +11,7 @@ export async function setupPrisma(packageManager: string, dbType?: string) {
   execSync(installCmd, { stdio: "inherit" });
 
   console.log("Initializing Prisma...");
-  execSync(`npx prisma init`, { stdio: "inherit" });
+  execSync(`npx prisma init`);
 
   const prismaSchemaPath = path.join("prisma", "schema.prisma");
   if (dbType !== "none") {
@@ -56,18 +56,11 @@ export async function setupPrisma(packageManager: string, dbType?: string) {
   generator client {
     provider = "prisma-client-js"
   }
-  
-  ${datasource}
-  
-  
- model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique @db.VarChar(255)
-  password  String   @db.VarChar(255) 
-  hashedRt  String?  @db.Text 
-
-  @@map("users")
-}
+  // crosss-db compatibility
+  model Counter {
+    counterId  String  @unique
+    counter Int
+  }
   `.trim();
 
   fs.writeFileSync(prismaSchemaPath, prismaSchemaContent);

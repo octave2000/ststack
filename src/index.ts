@@ -7,7 +7,7 @@ import { checkPackageManager } from "./helpers/checkPackageManager";
 import path from "path";
 import { isDirValid } from "./helpers/checkDirectory";
 import { initiateNestjs, initiateNextjs, initiateReactApp } from "./core";
-
+import { setupAuthjsNextjs } from "./utils/auth/authjs/setupAuthjs";
 const program = new Command();
 
 program
@@ -234,6 +234,19 @@ program
         addon: { dbType: addon.db, ormType: addon.orm },
         version: "latest",
       });
+
+    setupAuthjsNextjs({
+      dbType: addon.db,
+      ormType: addon.orm,
+      packageManager: userSelections.packageManager.toLowerCase() as
+        | "npm"
+        | "pnpm"
+        | "bun"
+        | "yarn",
+      addTypeScript:
+        userSelections.language.toLocaleLowerCase() == "typescript",
+      useSrcDir: true,
+    });
     if (userSelections.framework.toLocaleLowerCase().includes("react"))
       initiateReactApp({
         addEsLint: userSelections.eslintOption.toLocaleLowerCase() == "yes",
