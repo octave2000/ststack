@@ -134,7 +134,7 @@ program
           name: "auth",
           type: "rawlist",
           message: "do you want to add auth",
-          choices: ["none", "nextAuht"],
+          choices: ["none", "nextAuth"],
         },
       ]);
     }
